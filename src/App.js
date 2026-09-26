@@ -182,8 +182,8 @@ let AADS_CONFIG = {
 // transition ; une fois les variables Vercel en place, ce repli est ignore.
 // ============================================================
 const ENV = (typeof process !== "undefined" && process.env) ? process.env : {};
-const SUPABASE_URL = "https://bksdyvxaeasshccumylm.supabase.co";
-const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJrc2R5dnhhZWFzc2hjY3VteWxtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYzODY0ODYsImV4cCI6MjEwMTk2MjQ4Nn0.gKIvIvBQFYVvYPFYh2Pu0fpRxsp-PLLgbBqI6SegQQo";
+const SUPABASE_URL = "https://fcxxvfztoevcyackteut.supabase.co";
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZjeHh2Znp0b2V2Y3lhY2t0ZXV0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA0Mjc3MzUsImV4cCI6MjEwNjAwMzczNX0.dfX7JgXDc3jtQ9xKqY3c2SbiOqvS9Eb40btpZtQK53Y";
 
 // ============================================================
 // MULTI-SITES
