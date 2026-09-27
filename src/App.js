@@ -9007,7 +9007,7 @@ function Produits() {
                   </select>
                   <label style={{ fontSize:11, color:"#3b82f6", fontWeight:700, cursor:"pointer", background:"#1d4ed822", border:"1px solid #3b82f644", borderRadius:6, padding:"4px 10px" }}>
                     {uploading===p.id+"_"+newDocType?"Envoi...":"+ Ajouter document"}
-                    <input type="file" accept=".pdf,.jpg,.jpeg,.png" style={{ display:"none" }}
+                    <input type="file" accept=".pdf,.jpg,.jpeg,.png,.gif,.webp,.heic,.heif,.bmp,.tif,.tiff,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.csv,.rtf,.odt,.ods,.odp" style={{ display:"none" }}
                       onChange={e=>uploadDoc(p.id, e.target.files[0], newDocType)}/>
                   </label>
                 </div>
@@ -9283,7 +9283,7 @@ function Habilitations() {
                       <label style={{ background:"#22c55e22", color:"#22c55e", border:"1px solid #22c55e44", borderRadius:5, padding:"2px 8px", fontSize:10, fontWeight:700, cursor:"pointer" }}
                         title="Ajouter un document">
                         + Doc
-                        <input type="file" accept=".pdf,.jpg,.jpeg,.png" style={{ display:"none" }}
+                        <input type="file" accept=".pdf,.jpg,.jpeg,.png,.gif,.webp,.heic,.heif,.bmp,.tif,.tiff,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.csv,.rtf,.odt,.ods,.odp" style={{ display:"none" }}
                           onChange={e=>{ if(e.target.files[0]) uploadDoc(t.id, e.target.files[0], newDocType); }}/>
                       </label>
                       <button onClick={e=>{e.stopPropagation();setHiddenIds(prev=>prev.includes(t.id)?prev.filter(x=>x!==t.id):[...prev,t.id]);}} style={{ background:isHidden?"#f59e0b22":"#243352", color:isHidden?"#f59e0b":"#7a90aa", border:"1px solid "+(isHidden?"#f59e0b44":"#3d5270"), borderRadius:5, padding:"2px 8px", fontSize:10, fontWeight:700, cursor:"pointer", fontFamily:"inherit" }}>{isHidden?"Afficher":"Masquer"}</button>
@@ -9323,7 +9323,7 @@ function Habilitations() {
                   </select>
                   <label style={{ background:"#1d4ed822", color:"#3b82f6", border:"1px solid #3b82f644", borderRadius:7, padding:"5px 12px", fontSize:11, fontWeight:700, cursor:"pointer" }}>
                     {uploading?"Envoi...":"+ Importer PDF"}
-                    <input type="file" accept=".pdf,.jpg,.jpeg,.png" style={{ display:"none" }}
+                    <input type="file" accept=".pdf,.jpg,.jpeg,.png,.gif,.webp,.heic,.heif,.bmp,.tif,.tiff,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.csv,.rtf,.odt,.ods,.odp" style={{ display:"none" }}
                       onChange={e=>uploadDoc(sel.id, e.target.files[0], newDocType)}/>
                   </label>
                 </div>
@@ -9550,7 +9550,7 @@ function Agrements() {
               <div style={{ display:"flex", gap:6, alignItems:"center" }}>
                 <label style={{ fontSize:11, color:"#3b82f6", fontWeight:700, cursor:"pointer", background:"#1d4ed822", border:"1px solid #3b82f644", borderRadius:6, padding:"4px 10px" }}>
                   {uploading===a.id?"Envoi...":"+ PDF"}
-                  <input type="file" accept=".pdf,.jpg,.jpeg,.png" style={{ display:"none" }}
+                  <input type="file" accept=".pdf,.jpg,.jpeg,.png,.gif,.webp,.heic,.heif,.bmp,.tif,.tiff,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.csv,.rtf,.odt,.ods,.odp" style={{ display:"none" }}
                     onChange={e=>uploadDoc(a.id, e.target.files[0])}/>
                 </label>
                 <button onClick={()=>setHiddenIds(prev=>prev.includes(a.id)?prev.filter(x=>x!==a.id):[...prev,a.id])}
@@ -9856,7 +9856,7 @@ function ContratDevis() {
             )}
             <label style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "#1a2540", border: "1px dashed #3d5270", borderRadius: 8, padding: "7px 14px", cursor: "pointer", fontSize: 12, color: "#7a90aa", fontWeight: 600 }}>
               + Joindre document / scan
-              <input type="file" accept="image/*,application/pdf" capture="environment" multiple style={{ display: "none" }} onChange={handlePhoto} />
+              <input type="file" accept=".pdf,.jpg,.jpeg,.png,.gif,.webp,.heic,.heif,.bmp,.tif,.tiff,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.csv,.rtf,.odt,.ods,.odp" capture="environment" multiple style={{ display: "none" }} onChange={handlePhoto} />
             </label>
           </div>
           <div style={{ display: "flex", gap: 8 }}>
@@ -9955,7 +9955,7 @@ function ContratDevis() {
                   ? <a href={doc.url_doc} target="_blank" rel="noreferrer" style={{ color:"#22c55e", fontWeight:700, textDecoration:"none" }}>Voir PDF</a>
                   : <label style={{ color:"#3b82f6", fontWeight:700, cursor:"pointer" }}>
                       {uploading===doc.id?"Envoi...":"+ Importer PDF"}
-                      <input type="file" accept=".pdf,.doc,.docx" style={{ display:"none" }}
+                      <input type="file" accept=".pdf,.jpg,.jpeg,.png,.gif,.webp,.heic,.heif,.bmp,.tif,.tiff,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.csv,.rtf,.odt,.ods,.odp" style={{ display:"none" }}
                         onChange={e=>uploadDoc(doc.id, e.target.files[0])}/>
                     </label>
                 ],
