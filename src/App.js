@@ -12345,7 +12345,7 @@ function PlanImplantation({ seuilsGlobaux }) {
   const [selectedPostesToAdd, setSelectedPostesToAdd] = useState([]);
   const [movingPoste, setMovingPoste] = useState(null);
   const [creatingPoste, setCreatingPoste] = useState(false);
-  const [newPosteDraft, setNewPosteDraft] = useState({ kind:"S", id:"", zone:"", appat:"Placebo", molecule:"Placebo" });
+  const [newPosteDraft, setNewPosteDraft] = useState({ nuisible:"Rongeurs", kind:"S", id:"", zone:"", macro:"Interieur", appat:"Placebo", molecule:"Placebo" });
   const [showGestion, setShowGestion] = useState(false);
   const [filterYear, setFilterYear]   = useState(null);
   const [showPlanEditor, setShowPlanEditor] = useState(false);
@@ -12726,19 +12726,25 @@ function PlanImplantation({ seuilsGlobaux }) {
   // KPIs for selected date
   const kpi = selDate ? getPassageStats(selDate) : {tot:0, part:0, ok:postes.length, total:postes.length};
 
-  // Numero suivant disponible pour un prefixe donne (S, R, Re)
-  function suggestNextId(kind){
-    var re = new RegExp("^"+kind+"(\\d+)$");
+  // Prefixe d'identifiant selon le nuisible (et le sous-type pour les rongeurs)
+  function prefixFor(d){
+    if ((d.nuisible||"Rongeurs")==="Rongeurs") return d.kind||"S";     // S / R / Re
+    if (d.nuisible==="Insectes volants") return "V";
+    if (d.nuisible==="Blattes") return "B";
+    if (d.nuisible==="Teignes") return "T";
+    if (d.nuisible==="IPS") return "IPS";
+    return "P";
+  }
+  // Numero suivant disponible pour un prefixe donne
+  function suggestNextId(prefix){
+    var re = new RegExp("^"+prefix+"(\\d+)$");
     var mx = 0;
     postes.forEach(function(p){ var m=re.exec(String(p.id)); if(m){ var v=parseInt(m[1]); if(v>mx) mx=v; } });
-    return kind+(mx+1);
+    return prefix+(mx+1);
   }
   function demarrerCreationPoste(){
     setPlacingPoste(""); setMovingPoste(null);
-    setNewPosteDraft(function(d){
-      var k = d.kind||"S";
-      return { kind:k, id: suggestNextId(k), zone:"", appat: k==="Re"?"Toxique":"Placebo", molecule: k==="Re"?"":"Placebo" };
-    });
+    setNewPosteDraft(function(d){ return { ...d, id: suggestNextId(prefixFor(d)) }; });
     setCreatingPoste(true);
   }
 
@@ -12750,15 +12756,16 @@ function PlanImplantation({ seuilsGlobaux }) {
       const rawId = (newPosteDraft.id||"").trim();
       if (!rawId) { alert("Entrez un numero de poste avant de cliquer sur le plan."); return; }
       if (postes.find(p=>String(p.id)===rawId) || getPts(activePlan).find(pt=>pt.id===rawId)) { alert("Le poste "+rawId+" existe deja."); return; }
-      const kind = newPosteDraft.kind;
-      const appat = newPosteDraft.appat || (kind==="Re" ? "Toxique" : "Placebo");
+      const nd = newPosteDraft;
+      const estRongeur = (nd.nuisible||"Rongeurs")==="Rongeurs";
+      const appat = estRongeur ? (nd.appat || (nd.kind==="Re" ? "Toxique" : "Placebo")) : "";
       const nouveau = {
-        id: rawId, contrat: CLIENT_CONFIG.contrat, zone: (newPosteDraft.zone||"").trim(),
-        macro: kind==="Re" ? "Exterieur" : "Interieur",
-        type: kind==="Re" ? "RE" : "RI",
-        nuisible: "Rongeurs",
+        id: rawId, contrat: CLIENT_CONFIG.contrat, zone: (nd.zone||"").trim(),
+        macro: estRongeur ? (nd.kind==="Re" ? "Exterieur" : "Interieur") : (nd.macro||"Interieur"),
+        type: estRongeur ? (nd.kind==="Re" ? "RE" : "RI") : "",
+        nuisible: nd.nuisible || "Rongeurs",
         appat: appat,
-        molecule_actuelle: (newPosteDraft.molecule||"").trim() || (appat==="Placebo" ? "Placebo" : ""),
+        molecule_actuelle: estRongeur ? ((nd.molecule||"").trim() || (appat==="Placebo" ? "Placebo" : "")) : "",
         statut: "Actif"
       };
       setPostes(prev=>[...prev, nouveau]);
@@ -12771,7 +12778,7 @@ function PlanImplantation({ seuilsGlobaux }) {
         alert("Le poste "+rawId+" n'a pas pu etre cree sur le serveur ("+(err.message||err)+"). Reessayez.");
       }
       // Propose automatiquement le numero suivant pour enchainer
-      setNewPosteDraft(d=>({ ...d, id: suggestNextId(d.kind) }));
+      setNewPosteDraft(d=>({ ...d, id: suggestNextId(prefixFor(d)) }));
       return;
     }
     if (movingPoste) {
@@ -13643,29 +13650,50 @@ function PlanImplantation({ seuilsGlobaux }) {
         )}
         {creatingPoste && (function(){
           var champ = {background:"#1a2540",border:"1px solid #3d5270",borderRadius:7,padding:"6px 10px",color:"#f1f5f9",fontSize:12,fontFamily:"inherit"};
+          var estRongeur = (newPosteDraft.nuisible||"Rongeurs")==="Rongeurs";
           return (
           <div style={{padding:"10px 14px",background:"#16a34a22",borderBottom:"1px solid #22c55e55",display:"flex",alignItems:"flex-end",gap:10,flexWrap:"wrap"}}>
-            <div><div style={{fontSize:9,color:"#7a90aa",marginBottom:2}}>Type</div>
-              <select value={newPosteDraft.kind}
-                onChange={e=>{ const k=e.target.value; setNewPosteDraft(d=>({ ...d, kind:k, id: suggestNextId(k), appat: k==="Re"?"Toxique":(d.appat||"Placebo"), molecule: k==="Re"?(d.molecule||""):(d.appat==="Toxique"?d.molecule:"Placebo") })); }}
+            <div><div style={{fontSize:9,color:"#7a90aa",marginBottom:2}}>Nuisible</div>
+              <select value={newPosteDraft.nuisible}
+                onChange={e=>{ const n=e.target.value; setNewPosteDraft(d=>{ var nd={...d, nuisible:n}; if(n==="Rongeurs"){ nd.appat = d.kind==="Re"?"Toxique":"Placebo"; nd.molecule = d.kind==="Re"?"":"Placebo"; } nd.id = suggestNextId(prefixFor(nd)); return nd; }); }}
                 style={champ}>
-                <option value="S">Souris — intérieur (S)</option>
-                <option value="R">Rat — intérieur (R)</option>
-                <option value="Re">Extérieur (Re)</option>
+                {["Rongeurs","Insectes volants","Blattes","Teignes","IPS"].map(n=><option key={n} value={n}>{n}</option>)}
               </select></div>
+            {estRongeur ? (
+              <div><div style={{fontSize:9,color:"#7a90aa",marginBottom:2}}>Type</div>
+                <select value={newPosteDraft.kind}
+                  onChange={e=>{ const k=e.target.value; setNewPosteDraft(d=>({ ...d, kind:k, id: suggestNextId(k), appat: k==="Re"?"Toxique":(d.appat||"Placebo"), molecule: k==="Re"?(d.molecule||""):(d.appat==="Toxique"?d.molecule:"Placebo") })); }}
+                  style={champ}>
+                  <option value="S">Souris — intérieur (S)</option>
+                  <option value="R">Rat — intérieur (R)</option>
+                  <option value="Re">Extérieur (Re)</option>
+                </select></div>
+            ) : (
+              <div><div style={{fontSize:9,color:"#7a90aa",marginBottom:2}}>Position</div>
+                <select value={newPosteDraft.macro}
+                  onChange={e=>setNewPosteDraft(d=>({...d, macro:e.target.value}))}
+                  style={champ}>
+                  <option value="Interieur">Intérieur</option>
+                  <option value="Exterieur">Extérieur</option>
+                </select></div>
+            )}
             <div><div style={{fontSize:9,color:"#7a90aa",marginBottom:2}}>N°</div>
               <input value={newPosteDraft.id} onChange={e=>setNewPosteDraft(d=>({...d, id:e.target.value}))} placeholder="N°" style={{...champ,width:80}}/></div>
             <div><div style={{fontSize:9,color:"#7a90aa",marginBottom:2}}>Zone / local</div>
               <input value={newPosteDraft.zone} onChange={e=>setNewPosteDraft(d=>({...d, zone:e.target.value}))} placeholder="Zone" style={{...champ,width:150}}/></div>
-            <div><div style={{fontSize:9,color:"#7a90aa",marginBottom:2}}>Appât</div>
-              <select value={newPosteDraft.appat}
-                onChange={e=>{ const a=e.target.value; setNewPosteDraft(d=>({...d, appat:a, molecule: a==="Placebo"?"Placebo":(d.molecule==="Placebo"?"":d.molecule)})); }}
-                style={champ}>
-                <option value="Placebo">Placebo</option>
-                <option value="Toxique">Toxique</option>
-              </select></div>
-            <div><div style={{fontSize:9,color:"#7a90aa",marginBottom:2}}>Molécule</div>
-              <input value={newPosteDraft.molecule} onChange={e=>setNewPosteDraft(d=>({...d, molecule:e.target.value}))} placeholder={newPosteDraft.appat==="Placebo"?"Placebo":"ex. BRODITOP"} style={{...champ,width:130}}/></div>
+            {estRongeur && (
+              <div><div style={{fontSize:9,color:"#7a90aa",marginBottom:2}}>Appât</div>
+                <select value={newPosteDraft.appat}
+                  onChange={e=>{ const a=e.target.value; setNewPosteDraft(d=>({...d, appat:a, molecule: a==="Placebo"?"Placebo":(d.molecule==="Placebo"?"":d.molecule)})); }}
+                  style={champ}>
+                  <option value="Placebo">Placebo</option>
+                  <option value="Toxique">Toxique</option>
+                </select></div>
+            )}
+            {estRongeur && (
+              <div><div style={{fontSize:9,color:"#7a90aa",marginBottom:2}}>Molécule</div>
+                <input value={newPosteDraft.molecule} onChange={e=>setNewPosteDraft(d=>({...d, molecule:e.target.value}))} placeholder={newPosteDraft.appat==="Placebo"?"Placebo":"ex. BRODITOP"} style={{...champ,width:130}}/></div>
+            )}
             <span style={{fontSize:12,color:"#22c55e",fontWeight:700,alignSelf:"center"}}>→ Cliquez sur le plan pour créer</span>
             <button onClick={()=>setCreatingPoste(false)} style={{background:"transparent",color:"#7a90aa",border:"1px solid #3d5270",borderRadius:6,padding:"6px 10px",fontSize:11,cursor:"pointer",fontFamily:"inherit",marginLeft:"auto"}}>Terminer</button>
           </div>
