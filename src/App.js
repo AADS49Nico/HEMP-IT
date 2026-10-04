@@ -889,10 +889,12 @@ const THEME_CSS = `
 :root{
   --bg:#1a2540; --bgd:#0f1e38; --card:#243352; --bd:#3d5270; --bd2:#2d3f62;
   --m1:#7a90aa; --m2:#94a3b8; --m3:#5a7090; --ts:#cbd5e1; --tx:#f1f5f9;
+  --side:#0d1526; --sidetx:#cbd5e1;
 }
 :root[data-theme="light"]{
-  --bg:#eef2f7; --bgd:#dde4ee; --card:#ffffff; --bd:#cdd7e3; --bd2:#e2e8f0;
-  --m1:#5b6b82; --m2:#5f6f85; --m3:#8394a8; --ts:#475569; --tx:#0f172a;
+  --bg:#eef2f7; --bgd:#dbe3ee; --card:#ffffff; --bd:#c4cfdd; --bd2:#dbe2ec;
+  --m1:#47566c; --m2:#475569; --m3:#5a6a80; --ts:#334155; --tx:#0f172a;
+  --side:#d7deea; --sidetx:#334155;
 }
 html,body{background:var(--bg);}
 `;
@@ -2495,7 +2497,7 @@ function Cartographie({ seuilsGlobaux }) {
               <tbody>
                 {seuilsInfestRows.map((row, i) => (
                   <tr key={row[0]} style={{ borderTop: "1px solid var(--bd2)", background: i % 2 === 0 ? "transparent" : "#ffffff04" }}>
-                    <td style={{ padding: "7px 10px", color: "#e2e8f0", fontWeight: 600 }}>{row[0]}</td>
+                    <td style={{ padding: "7px 10px", color: "var(--tx)", fontWeight: 600 }}>{row[0]}</td>
                     <td style={{ padding: "7px 10px", textAlign: "center", color: "#22c55e" }}>{row[1]}</td>
                     <td style={{ padding: "7px 10px", textAlign: "center", color: "#f59e0b" }}>{row[2]}</td>
                     <td style={{ padding: "7px 10px", textAlign: "center", color: "#ef4444" }}>{row[3]}</td>
@@ -3311,7 +3313,7 @@ function Conformite() {
             ) : (
               <div style={{ padding:"12px 18px", display:"grid", gridTemplateColumns:"80px 1fr 130px 110px 80px", gap:10, alignItems:"center", borderTop:"1px solid var(--bd)", background:i%2===0?"transparent":"#ffffff04" }}>
                 <div style={{ fontSize:12, fontWeight:700, color:"#3b82f6", fontFamily:"monospace" }}>{c.ref}</div>
-                <div style={{ fontSize:12, color:"#e2e8f0" }}>{c.libelle}</div>
+                <div style={{ fontSize:12, color:"var(--tx)" }}>{c.libelle}</div>
                 <Badge label={c.statut}/>
                 <div style={{ fontSize:12, color:"var(--m1)" }}>{c.date}</div>
                 <div style={{ display:"flex", gap:4 }}>
@@ -15595,7 +15597,7 @@ function AppPortail({ isAdmin, onLogout }) {
   // n est pas renseignee, on affiche un message clair au lieu d un ecran blanc.
   if (!SUPABASE_URL || !SUPABASE_KEY) {
     return (
-      <div style={{ fontFamily:"'DM Sans',system-ui,sans-serif", background:"var(--bg)", color:"#e2e8f0", minHeight:"100vh", display:"flex", alignItems:"center", justifyContent:"center", padding:24 }}>
+      <div style={{ fontFamily:"'DM Sans',system-ui,sans-serif", background:"var(--bg)", color:"var(--tx)", minHeight:"100vh", display:"flex", alignItems:"center", justifyContent:"center", padding:24 }}>
         <div style={{ maxWidth:520, background:"var(--card)", border:"1px solid var(--bd)", borderRadius:12, padding:28 }}>
           <div style={{ fontSize:18, fontWeight:800, marginBottom:12, color:"var(--tx)" }}>Portail non configure</div>
           <div style={{ fontSize:14, lineHeight:1.6, color:"var(--ts)" }}>
@@ -15609,12 +15611,12 @@ function AppPortail({ isAdmin, onLogout }) {
   }
 
   return (
-    <div style={{ fontFamily: "'DM Sans','Segoe UI',system-ui,sans-serif", background: "var(--bg)", minHeight: "100vh", color: "#e2e8f0", zoom: appZoom }}>
+    <div style={{ fontFamily: "'DM Sans','Segoe UI',system-ui,sans-serif", background: "var(--bg)", minHeight: "100vh", color: "var(--tx)", zoom: appZoom }}>
       <div style={{ display: "flex", minHeight: "100vh" }}>
 
         {/* SIDEBAR */}
         {sidebarVisible && (
-        <aside style={{ width: sidebarWidth, minWidth: 48, maxWidth: 400, background: "#0d1526", borderRight: "1px solid var(--bd2)", padding: "0 0 16px", flexShrink: 0, display: "flex", flexDirection: "column", overflowY: "auto", position: "relative", transition: sidebarResizing.current ? "none" : "width 0.05s" }}>
+        <aside style={{ width: sidebarWidth, minWidth: 48, maxWidth: 400, background: "var(--side)", borderRight: "1px solid var(--bd2)", padding: "0 0 16px", flexShrink: 0, display: "flex", flexDirection: "column", overflowY: "auto", position: "relative", transition: sidebarResizing.current ? "none" : "width 0.05s" }}>
           {/* Poignée de redimensionnement */}
           <div
             onMouseDown={e => {
@@ -15690,7 +15692,7 @@ function AppPortail({ isAdmin, onLogout }) {
                 return (
                   <React.Fragment key={id}>
                     {showGroupTitle && (
-                      <div style={{ padding: "10px 16px 3px", fontSize: 9, fontWeight: 800, color: "var(--bd)", letterSpacing: 1.5, textTransform: "uppercase" }}>{grp.group}</div>
+                      <div style={{ padding: "10px 16px 3px", fontSize: 9, fontWeight: 800, color: "var(--m3)", letterSpacing: 1.5, textTransform: "uppercase" }}>{grp.group}</div>
                     )}
                     <div
                       draggable
